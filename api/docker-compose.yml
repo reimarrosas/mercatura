@@ -1,0 +1,20 @@
+services:
+  persistent_store:
+    image: postgres:latest
+    restart: 'always'
+    environment:
+      - POSTGRES_USER=mercatura
+      - POSTGRES_PASSWORD=mercatura
+      - POSTGRES_DB=mercatura
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+  session_store:
+    image: redis:latest
+    restart: 'always'
+    ports:
+      - '127.0.0.1:6379:6379'
+
+volumes:
+  pg_data:
