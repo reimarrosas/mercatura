@@ -1,0 +1,13 @@
+services:
+  persistent_store:
+    image: postgres:latest
+    restart: 'always'
+    environment:
+      - POSTGRES_PASSWORD=test
+    ports:
+      - '127.0.0.1:5433:5432'
+  session_store:
+    image: redis:latest
+    restart: 'always'
+    ports:
+      - '127.0.0.1:6380:6379'

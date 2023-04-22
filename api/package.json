@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "docker:up": "docker run --name test-db -p 5433:5432 -e POSTGRES_PASSWORD=test -d postgres",
-    "docker:down": "docker rm -fv test-db",
-    "test": "npm run docker:up && jest && npm run docker:down",
-    "test:unit": "jest --testMatch '<rootDir>/src/**/*.unit.(spec|test).ts' --passWithNoTests",
-    "test:int": "npm run docker:up && jest --testMatch '<rootDir>/src/**/*.int.(spec|test).ts' --passWithNoTests && npm run docker:down"
+    "docker:up": "docker compose -f 'docker-compose.test.yml' up -d",
+    "docker:down": "docker compose -f docker-compose.test.yml down",
+    "migrate": "npx dotenv-cli -e .env.test.local -- npx prisma migrate deploy",
+    "test": "NODE_ENV=testing npm run docker:up && npm run migrate && jest && npm run docker:down",
+    "test:unit": "NODE_ENV=testing jest --testMatch '<rootDir>/src/**/*.unit.(spec|test).ts' --passWithNoTests",
+    "test:int": "NODE_ENV=testing npm run docker:up && npm run migrate && jest --testMatch '<rootDir>/src/**/*.int.(spec|test).ts' --passWithNoTests && npm run docker:down"
   },
   "dependencies": {
     "argon2": "^0.30.3",
