@@ -1,6 +1,7 @@
 import supertest from "supertest"
 
 import app from "./app"
+import { redisClient } from "./utils/config";
 
 type GetSlashResponse = {
     message: string;
@@ -15,4 +16,6 @@ describe('GET /', () => {
             message: 'Hello, World!'
         })
     })
+
+    afterAll(async () => await redisClient.disconnect())
 })
