@@ -1,4 +1,4 @@
-import { narrowSignupCredentials } from "../utils/narrowing"
+import { narrowLoginCredentials, narrowSignupCredentials } from "../utils/narrowing"
 import { isValidEmail, isValidPassword } from "./auth.controller"
 
 describe('Authentication Unit', () => {
@@ -15,6 +15,10 @@ describe('Authentication Unit', () => {
     describe('Password Validation', () => {
         it('should return true on strong password', () => {
             expect<boolean>(isValidPassword('Passw0rd')).toBe(true)
+        })
+
+        it('should return true on valid password with special characters', () => {
+            expect(isValidPassword('Passw0rd!@#$%^&*()-_=+[]{}\\|;:\'",<.>/?'))
         })
 
         it('should return false on no uppercase character', () => {
@@ -62,6 +66,29 @@ describe('Authentication Unit', () => {
 
         it('should return false on invalid property types', () => {
             falseTestCases.forEach(testCase => expect<boolean>(narrowSignupCredentials(testCase)).toBe(false))
+        })
+    })
+
+    describe('Login Credentials Narrower', () => {
+        const validLoginCredentials = {
+            email: 'sample@test.com',
+            password: 'Sample-test123'
+        }
+
+        it('should return true on valid LoginCredentials Schema', () => {
+            expect(narrowLoginCredentials(validLoginCredentials)).toBe(true)
+        })
+
+        const falseTestCases = [{
+            ...validLoginCredentials,
+            email: false
+        }, {
+            ...validLoginCredentials,
+            password: null
+        }]
+
+        it('should reutrn false on invalid property types', () => {
+            falseTestCases.forEach(testCase => expect(narrowLoginCredentials(testCase)).toBe(false))
         })
     })
 })

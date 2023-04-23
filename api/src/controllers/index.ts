@@ -1,1 +1,1 @@
-export { signup } from './auth.controller'
+export { signup, login } from './auth.controller'
