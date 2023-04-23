@@ -143,5 +143,102 @@ describe('Authentication Integration', () => {
                 error: 'User already exists'
             })
         })
+
+    })
+
+    describe('Login', () => {
+        it('should return 200 on valid login credentials', async () => {
+            const loginCreds = {
+                email: 'sample@test.com',
+                password: 'Sample-test123'
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect(response.statusCode).toBe(200)
+            expect(response.headers['set-cookie']).not.toBeFalsy()
+            expect(response.body).toEqual({
+                message: 'User login successful',
+                error: null
+            })
+        })
+
+        it('should return 403 if user does not exist', async () => {
+            const loginCreds = {
+                email: 'sample-ne@test.com',
+                password: 'Sample-test123'
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect(response.statusCode).toBe(403)
+            expect(response.headers['set-cookie']).toBeFalsy()
+            expect(response.body).toEqual({
+                message: null,
+                error: 'User does not exist'
+            })
+        })
+
+        it('should return 401 if password provided does not match', async () => {
+            const loginCreds = {
+                email: 'sample@test.com',
+                password: 'WrongPassw0rd'
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect(response.statusCode).toBe(401)
+            expect(response.headers['set-cookie']).toBeFalsy()
+            expect(response.body).toEqual({
+                message: null,
+                error: 'Invalid password'
+            })
+        })
+
+        it('should return 422 on wrong POST body schema', async () => {
+            const loginCreds = {
+                email: undefined,
+                password: null
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect(response.statusCode).toBe(422)
+            expect(response.headers['set-cookie']).toBeFalsy()
+            expect(response.body).toEqual({
+                message: null,
+                error: 'Body should contain: email|string, password|string'
+            })
+        })
+
+        it('should return 422 on invalid email pattern', async () => {
+            const loginCreds = {
+                email: 'test.com',
+                password: 'Sample-test123'
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect<number>(response.statusCode).toBe(422)
+            expect<Response>(response.body).toEqual({
+                message: null,
+                error: 'Invalid email'
+            })
+        })
+
+        it('should return 422 on invalid password pattern', async () => {
+            const loginCreds = {
+                email: 'sample@test.com',
+                password: 'Pw1'
+            }
+
+            const response = await supertest(app).post('/api/v1/login').send(loginCreds)
+
+            expect<number>(response.statusCode).toBe(422)
+            expect<Response>(response.body).toEqual({
+                message: null,
+                error: 'Invalid password'
+            })
+        })
     })
 })

@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 import argon2 from 'argon2'
 
-import { narrowSignupCredentials } from "../utils/narrowing";
+import { narrowLoginCredentials, narrowSignupCredentials } from "../utils/narrowing";
 import { prisma } from "../database";
 
 // Returns true if email has '@' symbol and '.' symbol in the default places
 export const isValidEmail = (str: string) => /.+@.+/.test(str)
 
 // Returns true if password has at least 1 lowercase, 1 uppercase, 1 number, and 8 characters long
-export const isValidPassword = (str: string) => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(str)
+export const isValidPassword = (str: string) => /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(str)
 
 // Returns true of the requestBody conforms to the SignupCredentials schema and has valid email, password, and confirmPassword
 export const signup: RequestHandler = async (req, res) => {
@@ -62,6 +62,56 @@ export const signup: RequestHandler = async (req, res) => {
 
     return res.status(201).send({
         message: 'User signup successful',
+        error: null
+    })
+}
+
+export const login: RequestHandler = async (req, res) => {
+    if (!narrowLoginCredentials(req.body)) {
+        return res.status(422).send({
+            message: null,
+            error: 'Body should contain: email|string, password|string'
+        })
+    } else if (!isValidEmail(req.body.email)) {
+        return res.status(422).send({
+            message: null,
+            error: 'Invalid email'
+        })
+    } else if (!isValidPassword(req.body.password)) {
+        return res.status(422).send({
+            message: null,
+            error: 'Invalid password'
+        })
+    }
+
+    const user = await prisma.user.findFirst({
+        where: { email: req.body.email }
+    })
+
+    if (!user) {
+        return res.status(403).send({
+            message: null,
+            error: 'User does not exist'
+        })
+    }
+
+    const isPasswordMatching = await argon2.verify(user.password, req.body.password)
+
+    if (!isPasswordMatching) {
+        return res.status(401).send({
+            message: null,
+            error: 'Invalid password'
+        })
+    }
+
+    req.session.user = {
+        id: user.id,
+        email: user.email,
+        name: user.name
+    }
+
+    return res.send({
+        message: 'User login successful',
         error: null
     })
 }
