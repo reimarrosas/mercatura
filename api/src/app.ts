@@ -1,14 +1,10 @@
+import { sessionMiddleware } from './utils/config'
+
 import express from 'express'
 require('express-async-errors')
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
-
-if (process.env['NODE_ENV'] !== 'production') {
-    require('dotenv').config({
-        path: process.env['NODE_ENV'] === 'testing' ? '.env.test.local' : undefined
-    })
-}
 
 const app = express();
 app.use(cors({
@@ -18,6 +14,8 @@ app.use(cors({
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
+
+app.use(sessionMiddleware)
 
 app.get('/', (_req, res) => {
     res.send({
