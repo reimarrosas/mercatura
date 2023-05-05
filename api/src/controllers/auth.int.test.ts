@@ -1,15 +1,9 @@
 import { faker } from '@faker-js/faker'
 
-import { SignupCredentials } from "../../types"
 import supertest from 'supertest';
 import app from '../app';
 import { prisma } from '../database';
 import { redisClient } from '../utils/config';
-
-type Response = {
-    message?: string;
-    error?: string;
-}
 
 describe('Authentication Integration', () => {
     const initialUser = {
@@ -39,7 +33,7 @@ describe('Authentication Integration', () => {
     describe('Signup', () => {
         it('should return 201 on valid signup credentials', async () => {
             const password = generatePassword()
-            const signupCreds: SignupCredentials = {
+            const signupCreds = {
                 name: faker.name.fullName(),
                 email: faker.internet.email(),
                 password,
@@ -48,8 +42,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/signup').send(signupCreds)
 
-            expect<number>(response.statusCode).toBe(201)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(201)
+            expect(response.body).toEqual({
                 message: 'User signup successful',
                 error: null
             })
@@ -67,15 +61,15 @@ describe('Authentication Integration', () => {
         it('should return 422 on wrong POST body schema', async () => {
             const response = await supertest(app).post('/api/v1/signup').send({})
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Body should contain: name|string, email|string, password|string, confirmPassword|string'
             })
         })
 
         it('should return 422 on different password', async () => {
-            const signupCreds: SignupCredentials = {
+            const signupCreds = {
                 name: faker.name.fullName(),
                 email: faker.internet.email(),
                 password: generatePassword(),
@@ -84,8 +78,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/signup').send(signupCreds)
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Password does not match'
             })
@@ -93,7 +87,7 @@ describe('Authentication Integration', () => {
 
         it('should return 422 on invalid email pattern', async () => {
             const password = generatePassword()
-            const signupCreds: SignupCredentials = {
+            const signupCreds = {
                 name: faker.name.fullName(),
                 email: faker.name.fullName(),
                 password,
@@ -102,8 +96,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/signup').send(signupCreds)
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Invalid email'
             })
@@ -111,7 +105,7 @@ describe('Authentication Integration', () => {
 
         it('should return 422 on invalid password pattern', async () => {
             const password = faker.lorem.word(4)
-            const signupCreds: SignupCredentials = {
+            const signupCreds = {
                 name: faker.name.fullName(),
                 email: faker.internet.email(),
                 password: 'Pw1',
@@ -120,15 +114,15 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/signup').send(signupCreds)
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Invalid password'
             })
         })
 
         it('should return 403 on already existing email', async () => {
-            const signupCreds: SignupCredentials = {
+            const signupCreds = {
                 name: 'Sample User',
                 email: 'sample@test.com',
                 password: 'Sample-test123',
@@ -137,8 +131,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/signup').send(signupCreds)
 
-            expect<number>(response.statusCode).toBe(403)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(403)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'User already exists'
             })
@@ -219,8 +213,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/login').send(loginCreds)
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Invalid email'
             })
@@ -234,8 +228,8 @@ describe('Authentication Integration', () => {
 
             const response = await supertest(app).post('/api/v1/login').send(loginCreds)
 
-            expect<number>(response.statusCode).toBe(422)
-            expect<Response>(response.body).toEqual({
+            expect(response.statusCode).toBe(422)
+            expect(response.body).toEqual({
                 message: null,
                 error: 'Invalid password'
             })

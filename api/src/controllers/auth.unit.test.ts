@@ -4,17 +4,17 @@ import { isValidEmail, isValidPassword } from "./auth.controller"
 describe('Authentication Unit', () => {
     describe('Email Validation', () => {
         it('should return true on regular email form', () => {
-            expect<boolean>(isValidEmail('test@test.com')).toBe(true)
+            expect(isValidEmail('test@test.com')).toBe(true)
         })
 
         it('should return false when there\'s no @ symbol', () => {
-            expect<boolean>(isValidEmail('test.com')).toBe(false)
+            expect(isValidEmail('test.com')).toBe(false)
         })
     })
 
     describe('Password Validation', () => {
         it('should return true on strong password', () => {
-            expect<boolean>(isValidPassword('Passw0rd')).toBe(true)
+            expect(isValidPassword('Passw0rd')).toBe(true)
         })
 
         it('should return true on valid password with special characters', () => {
@@ -22,19 +22,19 @@ describe('Authentication Unit', () => {
         })
 
         it('should return false on no uppercase character', () => {
-            expect<boolean>(isValidPassword('passw0rd')).toBe(false)
+            expect(isValidPassword('passw0rd')).toBe(false)
         })
 
         it('should return false on no lowercase character', () => {
-            expect<boolean>(isValidPassword('PASSW0RD')).toBe(false)
+            expect(isValidPassword('PASSW0RD')).toBe(false)
         })
 
         it('should return false on no numeric character', () => {
-            expect<boolean>(isValidPassword('Password')).toBe(false)
+            expect(isValidPassword('Password')).toBe(false)
         })
 
         it('should return false on less than 8 characters', () => {
-            expect<boolean>(isValidPassword('Pw1')).toBe(false)
+            expect(isValidPassword('Pw1')).toBe(false)
         })
     })
 
@@ -47,7 +47,7 @@ describe('Authentication Unit', () => {
         }
 
         it('should return true on valid SignupCredentials Schema', () => {
-            expect<boolean>(narrowSignupCredentials(validSignupCredentials)).toBe(true)
+            expect(narrowSignupCredentials(validSignupCredentials)).toBe(true)
         })
 
         const falseTestCases = [{
@@ -87,7 +87,7 @@ describe('Authentication Unit', () => {
             password: null
         }]
 
-        it('should reutrn false on invalid property types', () => {
+        it('should return false on invalid property types', () => {
             falseTestCases.forEach(testCase => expect(narrowLoginCredentials(testCase)).toBe(false))
         })
     })
