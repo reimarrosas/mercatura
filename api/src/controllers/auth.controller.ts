@@ -14,22 +14,18 @@ export const isValidPassword = (str: string) => /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-
 export const signup: RequestHandler = async (req, res) => {
     if (!narrowSignupCredentials(req.body)) {
         return res.status(422).send({
-            message: null,
             error: 'Body should contain: name|string, email|string, password|string, confirmPassword|string'
         })
     } else if (!isValidEmail(req.body.email)) {
         return res.status(422).send({
-            message: null,
             error: 'Invalid email'
         })
     } else if (!isValidPassword(req.body.password)) {
         return res.status(422).send({
-            message: null,
             error: 'Invalid password'
         })
     } else if (req.body.password !== req.body.confirmPassword) {
         return res.status(422).send({
-            message: null,
             error: 'Password does not match'
         })
     }
@@ -40,7 +36,6 @@ export const signup: RequestHandler = async (req, res) => {
 
     if (user) {
         return res.status(403).send({
-            message: null,
             error: 'User already exists'
         })
     }
@@ -55,31 +50,26 @@ export const signup: RequestHandler = async (req, res) => {
 
     if (!insertedUser) {
         res.status(500).send({
-            message: null,
             error: 'Something broke'
         })
     }
 
     return res.status(201).send({
         message: 'User signup successful',
-        error: null
     })
 }
 
 export const login: RequestHandler = async (req, res) => {
     if (!narrowLoginCredentials(req.body)) {
         return res.status(422).send({
-            message: null,
             error: 'Body should contain: email|string, password|string'
         })
     } else if (!isValidEmail(req.body.email)) {
         return res.status(422).send({
-            message: null,
             error: 'Invalid email'
         })
     } else if (!isValidPassword(req.body.password)) {
         return res.status(422).send({
-            message: null,
             error: 'Invalid password'
         })
     }
@@ -90,7 +80,6 @@ export const login: RequestHandler = async (req, res) => {
 
     if (!user) {
         return res.status(403).send({
-            message: null,
             error: 'User does not exist'
         })
     }
@@ -99,7 +88,6 @@ export const login: RequestHandler = async (req, res) => {
 
     if (!isPasswordMatching) {
         return res.status(401).send({
-            message: null,
             error: 'Invalid password'
         })
     }
@@ -112,6 +100,5 @@ export const login: RequestHandler = async (req, res) => {
 
     return res.send({
         message: 'User login successful',
-        error: null
     })
 }
