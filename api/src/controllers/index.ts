@@ -1,2 +1,2 @@
 export { signup, login } from './auth.controller'
-export { getAllProducts } from './product.controller'
+export { getAllProducts, getSingleProduct } from './product.controller'
