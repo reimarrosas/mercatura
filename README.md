@@ -49,9 +49,10 @@ _To be created_
 
 1. As a customer, I should be able to view all products
 2. As a customer, I should be able to search for products that match my criteria
-3. As an admin, I should be able to create new products using the dashsboard
-4. As an admin, I should be able to update products using the dashboard
-5. As an admin, I should be able to delete products using the dashboard
+3. As a customer, I should be able to view a single product
+4. As an admin, I should be able to create new products using the dashboard
+5. As an admin, I should be able to update products using the dashboard
+6. As an admin, I should be able to delete products using the dashboard
 
 ### Categories
 
