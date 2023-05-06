@@ -16,3 +16,14 @@ model User {
   email     String  @unique
   password  String
 }
+
+model Product {
+  id            Int         @id @default(autoincrement())
+  name          String
+  description   String
+  image         String
+  price         Decimal
+  quantity      Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+}
