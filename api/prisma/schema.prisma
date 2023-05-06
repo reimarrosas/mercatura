@@ -26,4 +26,16 @@ model Product {
   quantity      Int
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
+  category      Category?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  category_id   Int?
+}
+
+model Category {
+  id            Int         @id @default(autoincrement())
+  name          String      @unique
+  description   String
+  image         String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  products      Product[]
 }
