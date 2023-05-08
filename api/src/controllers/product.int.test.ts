@@ -1,61 +1,44 @@
 import supertest from "supertest"
-import { Product } from "@prisma/client"
 
 import { prisma } from "../database"
 import { redisClient } from "../utils/config"
 import app from "../app"
+import { productToJson, truncateDB } from "../utils/testUtils"
 
 describe('Product Integration', () => {
-    beforeAll(async () => {
-        await prisma.product.createMany({
-            data: [
-                {
-                    name: 'Towel',
-                    description: 'Towel Description',
-                    image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
-                    price: 8.38,
-                    quantity: 100,
-                },
-                {
-                    name: 'Bag',
-                    description: 'Bag Description',
-                    image: 'https://i5.walmartimages.ca/images/Large/027/733/6000200027733.jpg',
-                    price : 24.97,
-                    quantity: 1,
-                },
-                {
-                    name: 'Battery',
-                    description: 'Battery Description',
-                    image: 'https://i5.walmartimages.ca/images/Large/174/852/6000201174852.jpg',
-                    price: 13.98,
-                    quantity: 50
-                }
-            ]
-        })
-    })
-
-    const productToJson = (product: Product) => ({
-        ...product,
-        price: product.price.toString(),
-        created_at: product.created_at.toISOString(),
-        updated_at: product.updated_at.toISOString()
-    })
-
     afterAll(async () => {
-        const deleteProducts = prisma.product.deleteMany()
-
-        await prisma.$transaction([deleteProducts])
-
         await prisma.$disconnect()
 
         await redisClient.disconnect()
     })
 
     describe('GET /products', () => {
+
+        beforeEach(async () => await truncateDB())
+
         it('should return 200 on get request on /products', async () => {
-            const response = await supertest(app).get('/api/v1/products')
+            await prisma.product.createMany({
+                data: [
+                    {
+                        name: 'Towel',
+                        description: 'Towel Description',
+                        image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
+                        price: 8.38,
+                        quantity: 100,
+                    },
+                    {
+                        name: 'Bag',
+                        description: 'Bag Description',
+                        image: 'https://i5.walmartimages.ca/images/Large/027/733/6000200027733.jpg',
+                        price : 24.97,
+                        quantity: 1,
+                    }
+                ]
+            })
 
             const products = await prisma.product.findMany()
+
+            const response = await supertest(app).get('/api/v1/products')
 
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
@@ -66,17 +49,26 @@ describe('Product Integration', () => {
     })
 
     describe('GET /products/:id', () => {
-        it('should return 200 on existing product', async () => {
-            const response = await supertest(app).get('/api/v1/products/1')
 
-            const product = await prisma.product.findFirstOrThrow({
-                where: { id: { equals: 1 } }
+        beforeEach(async () => await truncateDB())
+
+        it('should return 200 on existing product', async () => {
+            const product = await prisma.product.create({
+                data: {
+                    name: 'Towel',
+                    description: 'Towel Description',
+                    image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
+                    price: 8.38,
+                    quantity: 100,
+                }
             })
+
+            const response = await supertest(app).get(`/api/v1/products/${product.id}`)
 
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
-                message: 'GET Product 1 successful',
-                data: productToJson(product)
+                message: `GET Product ${product.id} successful`,
+                data: product && productToJson(product)
             })
         })
 

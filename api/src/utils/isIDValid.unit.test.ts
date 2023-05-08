@@ -1,7 +1,7 @@
-import { isProductIDValid } from "./product.controller"
+import { isIDValid } from "./isIDValid"
 
-describe('Products Unit', () => {
-    describe('Product ID Validation', () => {
+describe('isIDValid Unit', () => {
+    describe('ID Validation', () => {
         it.each([
             [true, 'non-zero whole number', '10'],
             [false, 'zero-starting numbers', '010'],
@@ -11,7 +11,7 @@ describe('Products Unit', () => {
             [false, 'decimal numbers', '1.234'],
             [false, 'undefined', undefined],
         ])('should return %p on %s', (expected, _description, input) => {
-            expect(isProductIDValid(input)).toBe(expected)
+            expect(isIDValid(input)).toBe(expected)
         })
     })
 })
