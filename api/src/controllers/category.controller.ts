@@ -29,3 +29,24 @@ export const getSingleCategory: RequestHandler = async (req, res) => {
         data: product
     })
 }
+
+export const getCategoryProducts: RequestHandler = async (req, res) => {
+    const id = req.params['id']
+
+    if (!isIDValid(id)) {
+        return res.status(422).send({
+            error: 'Category ID must be a non-zero whole number'
+        })
+    }
+
+    const products = await prisma.product.findMany({
+        where: {
+            category_id: parseInt(id)
+        }
+    })
+
+    return res.send({
+        message: `GET Products with Category ${id} successful`,
+        data: products
+    })
+}

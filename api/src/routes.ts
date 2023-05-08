@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { getAllCategories, getAllProducts, getSingleCategory, getSingleProduct, login, signup } from "./controllers";
+import { getAllCategories, getAllProducts, getCategoryProducts, getSingleCategory, getSingleProduct, login, signup } from "./controllers";
 
 const router = express.Router()
 
@@ -12,5 +12,6 @@ router.get('/products/:id', getSingleProduct)
 
 router.get('/categories', getAllCategories)
 router.get('/categories/:id', getSingleCategory)
+router.get('/categories/:id/products', getCategoryProducts)
 
 export default router
