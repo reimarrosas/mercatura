@@ -1,0 +1,1 @@
+export const isIDValid = (id?: string): id is string => /^[1-9]\d*$/.test(id ?? '')
