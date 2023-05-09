@@ -76,6 +76,7 @@ describe('Product Integration', () => {
             [422, 'character passed as id', 'hello', { error: 'Product ID must be a non-zero whole number' }],
             [422, 'negative number passed as id', '-1', { error: 'Product ID must be a non-zero whole number' }],
             [422, 'decimal number passed as id', '1.2', { error: 'Product ID must be a non-zero whole number' }],
+            [404, 'non-existent product id', '1000', { error: 'Product 1000 not found' }],
         ])('should return %i on %s', async (statusCode, _description, passedId, body) => {
             const response = await supertest(app).get(`/api/v1/products/${passedId}`)
 
