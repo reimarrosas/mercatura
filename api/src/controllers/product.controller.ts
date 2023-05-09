@@ -24,6 +24,12 @@ export const getSingleProduct: RequestHandler = async (req, res) => {
         where: { id: { equals: parseInt(id) } }
     })
 
+    if (!product) {
+        return res.status(404).send({
+            error: `Product ${id} not found`
+        })
+    }
+
     return res.send({
         message: `GET Product ${req.params['id']} successful`,
         data: product

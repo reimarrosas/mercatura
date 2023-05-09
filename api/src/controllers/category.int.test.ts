@@ -69,6 +69,7 @@ describe('Category Integration', () => {
             [422, 'character passed as id', 'hello', { error: 'Category ID must be a non-zero whole number' }],
             [422, 'negative number passed as id', '-1', { error: 'Category ID must be a non-zero whole number' }],
             [422, 'decimal number passed as id', '1.2', { error: 'Category ID must be a non-zero whole number' }],
+            [404, 'non-existent category id', '1000', { error: 'Category 1000 not found' }],
         ])('should return %i on %s', async (statusCode, _description, passedId, body) => {
             const response = await supertest(app).get(`/api/v1/categories/${passedId}`)
 
@@ -126,6 +127,7 @@ describe('Category Integration', () => {
             [422, 'character passed as id', 'hello', { error: 'Category ID must be a non-zero whole number' }],
             [422, 'negative number passed as id', '-1', { error: 'Category ID must be a non-zero whole number' }],
             [422, 'decimal number passed as id', '1.2', { error: 'Category ID must be a non-zero whole number' }],
+            [404, 'non-existent category id', '1000', { error: 'Category 1000 not found' }],
         ])('should return %i on %s', async (statusCode, _description, passedId, body) => {
             const response = await supertest(app).get(`/api/v1/categories/${passedId}/products`)
 

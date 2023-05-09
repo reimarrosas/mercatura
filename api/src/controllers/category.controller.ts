@@ -20,13 +20,19 @@ export const getSingleCategory: RequestHandler = async (req, res) => {
         })
     }
 
-    const product = await prisma.category.findFirst({
+    const category = await prisma.category.findFirst({
         where: { id: { equals: parseInt(id) } }
     })
 
+    if (!category) {
+        return res.status(404).send({
+            error: `Category ${id} not found`
+        })
+    }
+
     return res.send({
-        message: `GET Product ${product?.id} successful`,
-        data: product
+        message: `GET Product ${category.id} successful`,
+        data: category
     })
 }
 
@@ -39,14 +45,21 @@ export const getCategoryProducts: RequestHandler = async (req, res) => {
         })
     }
 
-    const products = await prisma.product.findMany({
+    const category = await prisma.category.findFirst({
         where: {
-            category_id: parseInt(id)
-        }
+            id: { equals: parseInt(id) }
+        },
+        include: { products: true }
     })
+
+    if (!category) {
+        return res.status(404).send({
+            error: `Category ${id} not found`
+        })
+    }
 
     return res.send({
         message: `GET Products with Category ${id} successful`,
-        data: products
+        data: category.products
     })
 }
