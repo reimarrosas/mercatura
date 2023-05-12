@@ -1,5 +1,7 @@
-import { Category, Product } from "@prisma/client"
+import { Category, Comment, Product } from "@prisma/client"
 import { prisma } from "../database";
+import supertest from "supertest";
+import app from "../app";
 
 type MappedProduct = Omit<Product, 'price' | 'created_at' | 'updated_at'> & {
     created_at: string;
@@ -25,6 +27,32 @@ export const categoriesToJson = (category: Category): MappedCategory => ({
     created_at: category.created_at.toISOString(),
     updated_at: category.updated_at.toISOString(),
 })
+
+export const commentsToJson = (comment: Comment) => ({
+  ...comment,
+  created_at: comment.created_at.toISOString(),
+  updated_at: comment.updated_at.toISOString()
+})
+
+export const extractCookieAndUser = async () => {
+    const initialUser = {
+        name: 'Sample User 2',
+        email: 'sample2@test.com',
+        password: '$argon2id$v=19$m=16,t=3,p=1$cmtxaXh6VG94dGpnR1J3SA$WGx7uswP+F8gj8s3JW/opQkvdw'
+    }
+
+    const user = await prisma.user.create({ data: initialUser })
+
+    const response = await supertest(app).post('/api/v1/login').send({
+        email: 'sample2@test.com',
+        password: 'Sample-test123'
+    })
+
+    return {
+      userId: user.id,
+      authCookie: response.headers['set-cookie']
+    }
+}
 
 export const truncateDB = async () => {
   const tablenames = await prisma.$queryRaw<
