@@ -15,6 +15,7 @@ model User {
   name      String
   email     String  @unique
   password  String
+  comments Comment[]
 }
 
 model Product {
@@ -26,8 +27,9 @@ model Product {
   quantity      Int
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
-  category      Category?    @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  category      Category?   @relation(fields: [category_id], references: [id], onDelete: SetNull)
   category_id   Int?
+  comments      Comment[]
 }
 
 model Category {
@@ -38,4 +40,15 @@ model Category {
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
   products      Product[]
+}
+
+model Comment {
+  id            Int         @id @default(autoincrement())
+  content       String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       Int
+  product       Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id    Int
 }
