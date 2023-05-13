@@ -21,7 +21,8 @@ export const getSingleProduct: RequestHandler = async (req, res) => {
     }
 
     const product = await prisma.product.findFirst({
-        where: { id: { equals: parseInt(id) } }
+        where: { id: { equals: parseInt(id) } },
+        include: { comments: true }
     })
 
     if (!product) {
