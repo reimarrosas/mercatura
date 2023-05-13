@@ -1,4 +1,5 @@
 import { LoginCredentials, SignupCredentials } from "../../types"
+import { isIDValid } from "./isIDValid"
 
 export const hasKey = <K extends PropertyKey>(key: K, obj: object): obj is Record<K, unknown> => key in obj
 
@@ -11,3 +12,12 @@ export const narrowLoginCredentials = (creds: unknown): creds is LoginCredential
     typeof creds === 'object' && creds != null &&
     hasKey('email', creds) && typeof creds.email === 'string' &&
     hasKey('password', creds) && typeof creds.password === 'string'
+
+type CommentCreateData = {
+    content: string;
+    productId: number;
+}
+export const narrowCommentSchema = (comment: unknown): comment is CommentCreateData =>
+    typeof comment === 'object' && comment != null &&
+    hasKey('content', comment) && typeof comment.content === 'string' &&
+    hasKey('productId', comment) && typeof comment.productId === 'number' && isIDValid(comment.productId.toString())

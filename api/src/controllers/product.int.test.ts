@@ -3,7 +3,7 @@ import supertest from "supertest"
 import { prisma } from "../database"
 import { redisClient } from "../utils/config"
 import app from "../app"
-import { productToJson, truncateDB } from "../utils/testUtils"
+import { entityToJson, extractCookieAndUser, truncateDB } from "../utils/testUtils"
 
 describe('Product Integration', () => {
     afterAll(async () => {
@@ -43,7 +43,7 @@ describe('Product Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: 'GET Products successful',
-                data: products.map(productToJson)
+                data: products.map(entityToJson)
             })
         })
     })
@@ -60,7 +60,8 @@ describe('Product Integration', () => {
                     image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
                     price: 8.38,
                     quantity: 100,
-                }
+                },
+                include: { comments: true }
             })
 
             const response = await supertest(app).get(`/api/v1/products/${product.id}`)
@@ -68,7 +69,47 @@ describe('Product Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: `GET Product ${product.id} successful`,
-                data: product && productToJson(product)
+                data: product && entityToJson(product)
+            })
+        })
+
+        it('should return 200 on product with comments', async () => {
+            const { userId } = await extractCookieAndUser()
+            const product = await prisma.product.create({
+                data: {
+                    name: 'Towel',
+                    description: 'Towel Description',
+                    image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
+                    price: 8.38,
+                    quantity: 100,
+                    comments: {
+                        createMany: {
+                            data: [
+                                {
+                                    content: 'Sample Comment 1',
+                                    user_id: userId
+                                },
+                                {
+                                    content: 'Sample Comment 2',
+                                    user_id: userId
+                                },
+                                {
+                                    content: 'Sample Comment 3',
+                                    user_id: userId
+                                }
+                            ]
+                        }
+                    }
+                },
+                include: { comments: true }
+            })
+
+            const response = await supertest(app).get(`/api/v1/products/${product.id}`)
+
+            expect(response.statusCode).toBe(200)
+            expect(response.body).toEqual({
+                message: `GET Product ${product.id} successful`,
+                data: entityToJson(product)
             })
         })
 

@@ -102,3 +102,13 @@ export const login: RequestHandler = async (req, res) => {
         message: 'User login successful',
     })
 }
+
+export const authGuard: RequestHandler = async (req, res, next) => {
+    if (req.session.user) {
+        return next()
+    }
+
+    return res.status(401).send({
+        error: 'User not authenticated'
+    })
+}

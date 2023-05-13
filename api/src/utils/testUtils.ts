@@ -1,30 +1,47 @@
-import { Category, Product } from "@prisma/client"
 import { prisma } from "../database";
+import supertest from "supertest";
+import app from "../app";
+import { Decimal } from "@prisma/client/runtime/library";
 
-type MappedProduct = Omit<Product, 'price' | 'created_at' | 'updated_at'> & {
-    created_at: string;
-    updated_at: string;
-    price: string;
+export const entityToJson = (entity: Record<string, unknown>): Record<string, unknown> => {
+  const ret: Record<string, unknown> = {}
+
+  for (const [key, value] of Object.entries(entity)) {
+    if (value instanceof Date) {
+      ret[key] = value.toISOString()
+    } else if (value instanceof Decimal) {
+      ret[key] = value.toString()
+    } else if (typeof value === 'object' && !Array.isArray(value) && value) {
+      ret[key] = entityToJson(value as Record<string, unknown>)
+    } else if (Array.isArray(value) && typeof value[0] === 'object') {
+      ret[key] = value.map(entityToJson)
+    } else {
+      ret[key] = value
+    }
+  }
+
+  return ret
 }
 
-type MappedCategory =  Omit<Category, 'created_at' | 'updated_at'> & {
-    created_at: string;
-    updated_at: string;
-    products?: MappedProduct;
+export const extractCookieAndUser = async () => {
+    const initialUser = {
+        name: 'Sample User 2',
+        email: 'sample2@test.com',
+        password: '$argon2id$v=19$m=16,t=3,p=1$cmtxaXh6VG94dGpnR1J3SA$WGx7uswP+F8gj8s3JW/opQkvdw'
+    }
+
+    const user = await prisma.user.create({ data: initialUser })
+
+    const response = await supertest(app).post('/api/v1/login').send({
+        email: 'sample2@test.com',
+        password: 'Sample-test123'
+    })
+
+    return {
+      userId: user.id,
+      authCookie: response.headers['set-cookie']
+    }
 }
-
-export const productToJson = (product: Product): MappedProduct => ({
-    ...product,
-    price: product.price.toString(),
-    created_at: product.created_at.toISOString(),
-    updated_at: product.updated_at.toISOString()
-})
-
-export const categoriesToJson = (category: Category): MappedCategory => ({
-    ...category,
-    created_at: category.created_at.toISOString(),
-    updated_at: category.updated_at.toISOString(),
-})
 
 export const truncateDB = async () => {
   const tablenames = await prisma.$queryRaw<

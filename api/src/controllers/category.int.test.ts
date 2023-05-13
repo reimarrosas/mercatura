@@ -2,7 +2,7 @@ import supertest from "supertest"
 import { prisma } from "../database"
 import { redisClient } from "../utils/config"
 import app from "../app"
-import { categoriesToJson, productToJson, truncateDB } from "../utils/testUtils"
+import { entityToJson, truncateDB } from "../utils/testUtils"
 
 describe('Category Integration', () => {
     afterAll(async () => {
@@ -38,7 +38,7 @@ describe('Category Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: 'GET Categories successful',
-                data: categories.map(categoriesToJson)
+                data: categories.map(entityToJson)
             })
         })
     })
@@ -61,7 +61,7 @@ describe('Category Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: `GET Product ${category.id} successful`,
-                data: category && categoriesToJson(category)
+                data: category && entityToJson(category)
             })
         })
 
@@ -119,7 +119,7 @@ describe('Category Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: `GET Products with Category ${category.id} successful`,
-                data: category.products.map(productToJson)
+                data: category.products.map(entityToJson)
             })
         })
 
