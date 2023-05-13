@@ -1,5 +1,6 @@
+import { Request, Response } from "express"
 import { narrowLoginCredentials, narrowSignupCredentials } from "../utils/narrowing"
-import { isValidEmail, isValidPassword } from "./auth.controller"
+import { authGuard, isValidEmail, isValidPassword } from "./auth.controller"
 
 describe('Authentication Unit', () => {
     describe('Email Validation', () => {
@@ -55,6 +56,54 @@ describe('Authentication Unit', () => {
             [false, 'invalid password type', { ...validLoginCredentials, password: null }]
         ])('should return %p on %s', (expected, _description, credentials) => {
             expect(narrowLoginCredentials(credentials)).toBe(expected)
+        })
+    })
+
+    describe('Auth Guard', () => {
+        const mockRequest = (): Request => {
+            const req: any = {}
+
+            req.session = {}
+
+            return req
+        }
+
+        const mockResponse = (): Response => {
+            const res: any = {}
+
+            res.status = jest.fn().mockReturnValue(res)
+            res.send = jest.fn().mockReturnValue(res)
+
+            return res
+        }
+
+        const next = jest.fn()
+
+        it('should run res.status with 401 and body with user not authenticated', () => {
+            const req = mockRequest()
+            const res = mockResponse()
+            authGuard(req, res, next)
+            
+            expect(res.status).toBeCalledWith(401)
+            expect(res.send).toBeCalledWith({
+                error: 'User not authenticated'
+            })
+            expect(next).not.toBeCalled()
+        })
+
+        it('should return next called with nothing', () => {
+            const req = mockRequest()
+            const res = mockResponse()
+            req.session.user = {
+                id: 1,
+                name: 'Sample Name',
+                email: 'sample@email.com'
+            }
+            authGuard(req, res, next)
+
+            expect(res.status).not.toBeCalled()
+            expect(res.send).not.toBeCalled()
+            expect(next).toBeCalled()
         })
     })
 })
