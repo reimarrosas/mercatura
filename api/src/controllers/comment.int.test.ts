@@ -148,7 +148,7 @@ describe('Comments Integration', () => {
             [422, 'character passed as id', 'hello', { error: 'Comment ID must be a non-zero whole number' }],
             [422, 'negative number passed as id', '-1', { error: 'Comment ID must be a non-zero whole number' }],
             [422, 'decimal number passed as id', '1.2', { error: 'Comment ID must be a non-zero whole number' }],
-            [403, 'non-existent category id', '1000', { error: 'Cannot update comment 1000' }],
+            [403, 'non-existent comment id', '1000', { error: 'Cannot update comment 1000' }],
         ])('should return %i on %s', async (statusCode, _description, passedId, body) => {
             const response = await supertest(app).patch(`/api/v1/comments/${passedId}`).set('Cookie', [authCookie]).send({
                 content: 'Sample Comment'
@@ -160,6 +160,71 @@ describe('Comments Integration', () => {
 
         it('should return 401 on non-authenticated user', async () => {
             const response = await supertest(app).patch('/api/v1/comments/1').send({
+                content: 'Sample Comment',
+            })
+
+            expect(response.statusCode).toBe(401)
+            expect(response.body).toEqual({
+                error: 'User not authenticated'
+            })
+        })
+    })
+
+    describe('DELETE /comments', () => {
+        let authCookie: string,
+            userId: number
+
+        beforeEach(async () => {
+            await truncateDB()
+            ;({ authCookie, userId } = await extractCookieAndUser())
+        })
+
+        it('should return 200 on successful comment delete', async () => {
+            const product = await prisma.product.create({
+                data: {
+                    name: 'Towel',
+                    description: 'Towel Description',
+                    image: 'https://i5.walmartimages.ca/images/Large/756/605/6000201756605.jpg',
+                    price: 8.38,
+                    quantity: 100,
+                    comments: {
+                        create: {
+                            content: 'Sample Comment on Towel',
+                            user_id: userId
+                        }
+                    }
+                },
+                include: { comments: true }
+            })
+
+            const response = await supertest(app).delete(`/api/v1/comments/${product.comments[0]!.id}`).set('Cookie', [authCookie]).send()
+
+            const comment = await prisma.comment.findFirst({
+                where: { id: product.comments[0]!.id }
+            })
+
+            expect(response.statusCode).toBe(200)
+            expect(response.body).toEqual({
+                message: `Comment ${product.comments[0]!.id} deletion successful`,
+                data: commentsToJson(product.comments[0]!)
+            })
+            expect(comment).toBeNull()
+        })
+
+        it.each([
+            [422, 'character passed as id', 'hello', { error: 'Comment ID must be a non-zero whole number' }],
+            [422, 'negative number passed as id', '-1', { error: 'Comment ID must be a non-zero whole number' }],
+            [422, 'decimal number passed as id', '1.2', { error: 'Comment ID must be a non-zero whole number' }],
+            [403, 'non-existent comment id', '1000', { error: 'Cannot delete comment 1000' }],
+        ])('should return %i on %s', async (statusCode, _description, passedId, body) => {
+            const response = await supertest(app).delete(`/api/v1/comments/${passedId}`).set('Cookie', [authCookie]).send()
+
+            expect(response.statusCode).toBe(statusCode)
+            expect(response.body).toEqual(body)
+        })
+
+        it('should return 401 on non-authenticated user', async () => {
+            const response = await supertest(app).delete('/api/v1/comments/1').send({
                 content: 'Sample Comment',
             })
 

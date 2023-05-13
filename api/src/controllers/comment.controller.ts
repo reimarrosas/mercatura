@@ -72,3 +72,28 @@ export const updateComment: RequestHandler = async (req, res) => {
         data
     })
 }
+
+export const deleteComment: RequestHandler = async (req, res) => {
+    const id = req.params!['id']
+
+    if (!isIDValid(id)) {
+        return res.status(422).send({
+            error: 'Comment ID must be a non-zero whole number'
+        })
+    }
+
+    const data = await prisma.comment.delete({
+        where: { id: parseInt(id) }
+    }).catch(_ => null)
+
+    if (!data) {
+        return res.status(403).send({
+            error: `Cannot delete comment ${id}`
+        })
+    }
+
+    return res.send({
+        message: `Comment ${id} deletion successful`,
+        data
+    })
+}

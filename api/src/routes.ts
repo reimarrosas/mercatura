@@ -1,6 +1,18 @@
 import express from 'express'
 
-import { authGuard, createComment, getAllCategories, getAllProducts, getCategoryProducts, getSingleCategory, getSingleProduct, login, signup, updateComment } from "./controllers";
+import {
+    authGuard,
+    createComment,
+    deleteComment,
+    getAllCategories,
+    getAllProducts,
+    getCategoryProducts,
+    getSingleCategory,
+    getSingleProduct,
+    login,
+    signup,
+    updateComment
+} from "./controllers";
 
 const router = express.Router()
 
@@ -16,5 +28,6 @@ router.get('/categories/:id/products', getCategoryProducts)
 
 router.post('/comments', authGuard, createComment)
 router.patch('/comments/:id', authGuard, updateComment)
+router.delete('/comments/:id', authGuard, deleteComment)
 
 export default router
