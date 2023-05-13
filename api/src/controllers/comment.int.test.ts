@@ -1,7 +1,7 @@
 import supertest from "supertest"
 import { prisma } from "../database"
 import { redisClient } from "../utils/config"
-import { commentsToJson, extractCookieAndUser, truncateDB } from "../utils/testUtils"
+import { entityToJson, extractCookieAndUser, truncateDB } from "../utils/testUtils"
 import app from "../app"
 
 describe('Comments Integration', () => {
@@ -43,7 +43,7 @@ describe('Comments Integration', () => {
             expect(response.statusCode).toBe(201)
             expect(response.body).toEqual({
                 message: 'Comment creation successful',
-                data: comment && commentsToJson(comment)
+                data: comment && entityToJson(comment)
             })
             expect(comment).not.toBeNull()
         })
@@ -206,7 +206,7 @@ describe('Comments Integration', () => {
             expect(response.statusCode).toBe(200)
             expect(response.body).toEqual({
                 message: `Comment ${product.comments[0]!.id} deletion successful`,
-                data: commentsToJson(product.comments[0]!)
+                data: entityToJson(product.comments[0]!)
             })
             expect(comment).toBeNull()
         })
