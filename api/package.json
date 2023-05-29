@@ -2,7 +2,7 @@
   "name": "api",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --minify",
     "dev": "tsup --watch --onSuccess 'node dist/index.js'",
     "test": "jest"
   },

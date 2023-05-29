@@ -1,7 +1,7 @@
 import { Express, RequestHandler, Router } from 'express'
 import { IMiddleware } from '@/types'
 
-export class App {
+export class AppWrapper {
   constructor(private app: Express) {}
 
   useAppMiddleware = (middleware: IMiddleware) => {
