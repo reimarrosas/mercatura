@@ -1,13 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
-import { AuthData } from '@type/auth'
+import { IJwtHelper } from '@type/auth'
 import { IMiddleware } from '@/types'
-import { IConfig } from '@type/config'
 
 export class AuthParserMiddleware implements IMiddleware {
-  constructor(private readonly config: IConfig) {}
+  constructor(private readonly jwtHelper: IJwtHelper) {}
 
-  extractBearerToken = (authHeader?: string) => {
+  private extractBearerToken = (authHeader?: string) => {
     if (!authHeader) {
       return undefined
     }
@@ -17,19 +15,11 @@ export class AuthParserMiddleware implements IMiddleware {
     return token
   }
 
-  extractTokenPayload = (token: string) => {
-    try {
-      return jwt.verify(token, this.config.token.secret) as AuthData
-    } catch (e) {
-      return undefined
-    }
-  }
-
   handler = (req: Request, _res: Response, next: NextFunction) => {
     const bearerToken = this.extractBearerToken(req.headers['authorization'])
 
     if (bearerToken) {
-      req.auth = this.extractTokenPayload(bearerToken)
+      req.auth = this.jwtHelper.extractPayload(bearerToken)
     }
 
     return next()

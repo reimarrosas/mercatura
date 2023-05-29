@@ -30,7 +30,8 @@
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],
       "@domains/*": ["domains/*"],
-      "@type/*": ["types/*"]
+      "@type/*": ["types/*"],
+      "@utils/*": ["utils/*"]
     },
     "typeRoots": ["src/types/index.d.ts", "./node_modules/@types"]
   },

@@ -10,23 +10,20 @@ _To be created_
 
 ### Frontend
 
-1. VueJS - Frontend Framework
-2. Vue-Rotuer - Client-side Routing
-3. Pinia - State management
-4. Tailwindcss - CSS Framework
-5. Vitest - Frontend Unit Testing
-6. Playwright - End-to-end Testing
+1. NextJS - Frontend Framework
+2. Redux Toolkit - State Management and Data Fetching Framework
+3. Tailwindcss - CSS Framework
+4. Jest - Frontend Unit Testing
 
 ### Backend
 
 1. NodeJS - Backend Runtime
 2. Express - Backend Framework
-3. Nodemailer - Mailing service
-4. Prisma - ORM
-5. PostgreSQL - Database
-6. Redis - Session store
-7. Supertest - Backend Integration Testing Helper
-8. Jest - Backend Unit/Integration Testing
+3. Prisma - ORM
+4. Postgres - Database
+5. Supertest - Backend Integration Testing Helper
+6. Jest - Backend Unit/Integration Testing
+7. Cloudinary - Media Cloud Storage
 
 ### General
 
@@ -37,13 +34,13 @@ _To be created_
 
 ### Authentication
 
-1. As a customer, I should be able to login to access my account.
-2. As a customer, I should be able to signup to create an account.
+1. As a customer, I should be able to log in to access my account.
+2. As a customer, I should be able to sign up to create an account.
 3. As a customer, I should be able to verify my account during creation
 
 ### Admin
 
-1. As an admin, I should be able to login to access my ECommerce dashboard
+1. As an admin, I should be able to log in to access my ECommerce dashboard
 
 ### Products
 
@@ -75,9 +72,9 @@ _To be created_
 
 ### Purchase
 
-1. As a customer, I should be able to checkout my cart when I finish shopping
+1. As a customer, I should be able to check out my cart when I finish shopping
 
 ### Invoice
 
-1. As a customer, I should be able to see the invoice of the purchase
-2. As an admin, I should be able to see the invoice of a customer's purchase
+1. As a customer, I should be able to see the invoice for the purchase
+2. As an admin, I should be able to see the invoice for a customer's purchase

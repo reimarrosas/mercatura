@@ -6,12 +6,13 @@ import morgan from 'morgan'
 
 import config from '@config/env'
 import { AuthParserMiddleware } from '@shared/middlewares/auth-parser'
-import { App } from '@config/app'
+import { AppWrapper } from '@utils/app-wrapper'
 import { NotFoundMiddleware } from '@shared/middlewares/not-found'
 import { ErrorHandlingMiddleware } from '@shared/middlewares/error-handling'
 import logger from '@config/logger'
+import { JwtHelper } from '@utils/jwt-helper'
 
-const app = new App(express())
+const app = new AppWrapper(express())
 
 app.useExternalMiddleware(
   cors({
@@ -23,7 +24,7 @@ app.useExternalMiddleware(helmet())
 
 app.useExternalMiddleware(morgan('dev'))
 
-app.useAppMiddleware(new AuthParserMiddleware(config))
+app.useAppMiddleware(new AuthParserMiddleware(new JwtHelper(config)))
 
 app.useAppMiddleware(new NotFoundMiddleware())
 app.useAppMiddleware(new ErrorHandlingMiddleware(logger))

@@ -3,3 +3,7 @@ export interface AuthData {
   name: string
   email: string
 }
+
+export interface IJwtHelper {
+  extractPayload: (token: string) => AuthData | undefined
+}
