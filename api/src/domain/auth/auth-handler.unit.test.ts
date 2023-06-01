@@ -13,15 +13,16 @@ import {
   validLoginDto,
   validSignupDto
 } from '@/domain/auth/utils/valid-test-inputs'
+import { assertType } from '@shared/assert-type'
 
 describe('Auth Handlers Unit Test', () => {
   describe('Login Handler', () => {
     let authService: IAuthService
 
     beforeEach(() => {
-      authService = {
+      authService = assertType({
         loginUser: undefined
-      } as unknown as IAuthService
+      })
     })
 
     it('should return 200 OK on valid login credentials', async () => {
@@ -101,9 +102,9 @@ describe('Auth Handlers Unit Test', () => {
     let authService: IAuthService
 
     beforeEach(() => {
-      authService = {
+      authService = assertType({
         createUser: undefined
-      } as unknown as IAuthService
+      })
     })
 
     it('should return 201 Success on valid Signup credentials', async () => {

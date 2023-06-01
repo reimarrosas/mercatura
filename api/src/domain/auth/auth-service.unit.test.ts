@@ -8,6 +8,7 @@ import {
   validSignupDto,
   validUserEntity
 } from '@/domain/auth/utils/valid-test-inputs'
+import { assertType } from '@shared/assert-type'
 
 describe('Auth Service Unit Test', () => {
   let mockCtx: MockContext
@@ -15,8 +16,9 @@ describe('Auth Service Unit Test', () => {
 
   beforeEach(() => {
     mockCtx = createMockContext()
-    ctx = mockCtx as unknown as Context
+    ctx = assertType(mockCtx)
   })
+
   describe('createUser', () => {
     it('should return an IAuthData object on successful creation', async () => {
       // Arrange
