@@ -1,5 +1,9 @@
-import { jwtUtilsFactory } from '@shared/utils/jwt'
+import { jwtUtilsFactory } from '@/domain/auth/utils/jwt'
 import { IConfig } from '@config/env'
+import {
+  validAuthData,
+  validToken
+} from '@/domain/auth/utils/valid-test-inputs'
 
 describe('JWT Utils Unit Test', () => {
   const utils = jwtUtilsFactory({
@@ -11,8 +15,7 @@ describe('JWT Utils Unit Test', () => {
   describe('extractPayload', () => {
     it('should return the payload on valid token', () => {
       // Arrange
-      const token =
-        'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlNhbXBsZSBVc2VyIiwiZW1haWwiOiJzYW1wbGV1c2VyQGVtYWlsLmNvbSJ9.X9cmtQ2JRT7LkNQZPB_ruxKt4cY6EV_9VzP5OkVb0Xu3aRc0Sv8cCFihdSEV82P0Aiqy0dv84S-fusSXCzeylQ'
+      const token = validToken
 
       // Act
       const result = utils.extractPayload(token)
@@ -47,6 +50,20 @@ describe('JWT Utils Unit Test', () => {
 
       // Assert
       expect(result).toBeUndefined()
+    })
+  })
+
+  describe('createToken', () => {
+    it('should return a token on valid payload', () => {
+      // Arrange
+      // Act
+      const result = utils.createToken(validAuthData)
+
+      // Assert
+      expect(typeof result).toBe('string')
+      expect(result).toMatch(
+        /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/
+      )
     })
   })
 })

@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 import { IConfig } from '@config/env'
-import { jwtUtilsFactory } from '@shared/utils/jwt'
+import { jwtUtilsFactory } from '@/domain/auth/utils/jwt'
 
 const extractBearerToken = (authHeader?: string) => {
   if (authHeader) {

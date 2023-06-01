@@ -3,12 +3,12 @@ import jwt from 'jsonwebtoken'
 import { IConfig } from '@config/env'
 import { authData, IAuthData } from '@shared/validators/auth-data'
 
-interface JwtUtils {
+export interface IJwtUtils {
   extractPayload: (token: string) => IAuthData | undefined
   createToken: (payload: IAuthData) => string
 }
 
-export const jwtUtilsFactory = ({ token: tokenCfg }: IConfig): JwtUtils => {
+export const jwtUtilsFactory = ({ token: tokenCfg }: IConfig): IJwtUtils => {
   const extractPayload = (token: string): IAuthData | undefined => {
     try {
       const payload = jwt.verify(token, tokenCfg.secret)
@@ -25,7 +25,7 @@ export const jwtUtilsFactory = ({ token: tokenCfg }: IConfig): JwtUtils => {
     }
   }
   const createToken = (payload: IAuthData) =>
-    jwt.sign(payload, tokenCfg.secret, {})
+    jwt.sign(payload, tokenCfg.secret, tokenCfg.options)
 
   return {
     extractPayload,

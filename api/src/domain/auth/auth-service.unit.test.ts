@@ -1,15 +1,13 @@
-import {
-  Context,
-  createMockContext,
-  MockContext
-} from '@shared/utils/testing/db-ctx'
+import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
 import { authServiceFactory } from '@/domain/auth/auth.service'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy'
+import { validPrismaClientKnownError } from '@shared/testing/generate-valid-inputs'
 import {
   validAuthData,
-  validPrismaClientKnownError,
-  validSignupDto
-} from '@shared/utils/testing/generate-valid-inputs'
+  validLoginDto,
+  validSignupDto,
+  validUserEntity
+} from '@/domain/auth/utils/valid-test-inputs'
 
 describe('Auth Service Unit Test', () => {
   let mockCtx: MockContext
@@ -56,10 +54,62 @@ describe('Auth Service Unit Test', () => {
   describe('loginUser', () => {
     it('should return an IAuthData object on successful login', async () => {
       // Arrange
-      mockCtx.prisma.user.fin
+      mockCtx.prisma.user.findUnique.mockResolvedValue(validUserEntity)
+      const authService = authServiceFactory(ctx.prisma)
 
       // Act
+      const result = await authService.loginUser(validLoginDto)
+
       // Assert
+      expect(result).toEqual(validAuthData)
+      expect(mockCtx.prisma.user.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            email: validLoginDto.email
+          }
+        })
+      )
+    })
+
+    it('should return undefined on non-existent user', async () => {
+      // Arrange
+      mockCtx.prisma.user.findUnique.mockResolvedValue(null)
+      const authService = authServiceFactory(ctx.prisma)
+
+      // Act
+      const result = await authService.loginUser(validLoginDto)
+
+      // Assert
+      expect(result).toBeUndefined()
+      expect(mockCtx.prisma.user.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            email: validLoginDto.email
+          }
+        })
+      )
+    })
+
+    it('should return undefined on invalid password', async () => {
+      // Arrange
+      mockCtx.prisma.user.findUnique.mockResolvedValue({
+        ...validUserEntity,
+        password: '$2b$10$iNvn1QmwO2WJUTN9gPvO2u/LXESqKlgtlRUAZloZW.zjFjUdK6Iw6'
+      })
+      const authService = authServiceFactory(ctx.prisma)
+
+      // Act
+      const result = await authService.loginUser(validLoginDto)
+
+      // Assert
+      expect(result).toBeUndefined()
+      expect(mockCtx.prisma.user.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            email: validLoginDto.email
+          }
+        })
+      )
     })
   })
 })

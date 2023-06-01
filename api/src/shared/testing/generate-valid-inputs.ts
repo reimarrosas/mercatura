@@ -3,18 +3,6 @@ import { Response } from 'express'
 import { ILogger } from '@config/logger'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy'
 
-export const validAuthData = {
-  id: 1,
-  name: 'Sample User',
-  email: 'sampleuser@email.com'
-}
-
-export const validSignupDto = {
-  name: 'Sample User',
-  email: 'sampleuser@email.com',
-  password: 'Sample-Password1'
-}
-
 export const validConfig = {
   token: {
     secret: '1testsecret1'

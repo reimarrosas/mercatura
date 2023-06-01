@@ -2,12 +2,14 @@ import { IAuthService } from '@/domain/auth/auth.service'
 import { RequestHandler } from 'express'
 import { HandlerFactoryReturnType } from '@shared/types/handler-factory'
 import { ILogger } from '@config/logger'
-import { signupDto } from '@/domain/auth/auth-dto'
+import { loginDto, signupDto } from '@/domain/auth/auth-dto'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
+import { IJwtUtils } from '@/domain/auth/utils/jwt'
 
 export const authHandlerFactory = (
   logger: ILogger,
-  authService: IAuthService
+  authService: IAuthService,
+  jwtUtils: IJwtUtils
 ): HandlerFactoryReturnType => {
   const signup: RequestHandler = async (req, res) => {
     const result = signupDto.safeParse(req.body)
@@ -31,7 +33,29 @@ export const authHandlerFactory = (
     })
   }
 
-  const login: RequestHandler = () => {}
+  const login: RequestHandler = async (req, res) => {
+    const result = loginDto.safeParse(req.body)
+
+    if (!result.success) {
+      throw new AppError(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY,
+        'Invalid request body schema'
+      )
+    }
+
+    const authData = await authService.loginUser(result.data)
+
+    if (!authData) {
+      throw new AppError(HTTPStatusCodes.FORBIDDEN, 'Action Forbidden')
+    }
+
+    const token = jwtUtils.createToken(authData)
+
+    return res.send({
+      message: 'User login successful',
+      token
+    })
+  }
 
   return {
     signup,

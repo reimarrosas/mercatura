@@ -1,16 +1,101 @@
 import {
   validLogger,
   validPrismaClientKnownError,
-  validResponse,
-  validSignupDto
-} from '@shared/utils/testing/generate-valid-inputs'
+  validResponse
+} from '@shared/testing/generate-valid-inputs'
 import { Request } from 'express'
 import { authHandlerFactory } from '@/domain/auth/auth.handler'
 import { IAuthService } from '@/domain/auth/auth.service'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
+import {
+  validAuthData,
+  validJwtUtils,
+  validLoginDto,
+  validSignupDto
+} from '@/domain/auth/utils/valid-test-inputs'
 
 describe('Auth Handlers Unit Test', () => {
-  describe('Login Handler', () => {})
+  describe('Login Handler', () => {
+    let authService: IAuthService
+
+    beforeEach(() => {
+      authService = {
+        loginUser: undefined
+      } as unknown as IAuthService
+    })
+
+    it('should return 200 OK on valid login credentials', async () => {
+      // Arrange
+      const req = { body: validLoginDto } as Request
+      authService.loginUser = jest.fn().mockResolvedValue(validAuthData)
+      const { login } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
+
+      // Act
+      await login!(req, validResponse, () => {})
+
+      // Assert
+      expect(authService.loginUser).toHaveBeenCalledWith(validLoginDto)
+      expect(validResponse.send).toHaveBeenCalledWith({
+        message: 'User login successful',
+        token: expect.stringMatching(
+          /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/
+        )
+      })
+    })
+
+    it('should throw AppError on invalid body schema', async () => {
+      // Arrange
+      const req = { body: {} } as Request
+      authService.loginUser = jest.fn()
+      const { login } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
+      let expectedError: AppError
+
+      // Act
+      try {
+        await login!(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = err as AppError
+      }
+
+      // Assert
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY
+      )
+      expect(authService.loginUser).not.toHaveBeenCalled()
+    })
+
+    it('should throw AppError on non-existent user', async () => {
+      // Arrange
+      const req = { body: validLoginDto } as Request
+      authService.loginUser = jest.fn().mockResolvedValue(undefined)
+      const { login } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
+      let expectedError: AppError
+
+      // Act
+      try {
+        await login!(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = err as AppError
+      }
+
+      // Assert
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(HTTPStatusCodes.FORBIDDEN)
+    })
+  })
 
   describe('Signup Handler', () => {
     let authService: IAuthService
@@ -25,7 +110,11 @@ describe('Auth Handlers Unit Test', () => {
       // Arrange
       const req = { body: validSignupDto } as Request
       authService.createUser = jest.fn()
-      const { signup } = authHandlerFactory(validLogger, authService)
+      const { signup } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
 
       // Act
       await signup!(req, validResponse, () => {})
@@ -42,7 +131,11 @@ describe('Auth Handlers Unit Test', () => {
       // Arrange
       const req = { body: {} } as Request
       authService.createUser = jest.fn()
-      const { signup } = authHandlerFactory(validLogger, authService)
+      const { signup } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
       let expectedError: AppError
 
       // Act
@@ -66,7 +159,11 @@ describe('Auth Handlers Unit Test', () => {
       authService.createUser = jest
         .fn()
         .mockRejectedValue(validPrismaClientKnownError)
-      const { signup } = authHandlerFactory(validLogger, authService)
+      const { signup } = authHandlerFactory(
+        validLogger,
+        authService,
+        validJwtUtils
+      )
       let expectedError: AppError
 
       // Act

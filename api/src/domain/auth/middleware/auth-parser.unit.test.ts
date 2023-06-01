@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { authParserFactory } from '@/domain/auth/middleware/auth-parser'
-import { validConfig } from '@shared/utils/testing/generate-valid-inputs'
+import { validConfig } from '@shared/testing/generate-valid-inputs'
 
 describe('Auth Parsing Middleware Unit Test', () => {
   let req: Request
