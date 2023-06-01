@@ -6,13 +6,13 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 
 import config from '@config/env'
-import { notFoundMiddleware } from '@shared/middlewares/not-found'
-import { errorMiddleware } from '@shared/middlewares/error-handling'
-import { authParserFactory } from '@shared/middlewares/auth-parser'
+import { notFoundMiddleware } from '@shared/middleware/not-found'
+import { errorMiddleware } from '@shared/middleware/error-handling'
+import { authParserFactory } from '@/domain/auth/middleware/auth-parser'
 
 const app = express()
 
-// Third-party middlewares
+// Third-party middleware
 app.use(
   cors({
     origin: config.clientUrl
@@ -27,7 +27,7 @@ app.use(authParserFactory(config))
 // NOTE: Put routes HERE
 // app.use()
 
-// Error handling middlewares
+// Error handling middleware
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)
 

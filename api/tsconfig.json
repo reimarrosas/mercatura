@@ -33,7 +33,8 @@
       "@domains/*": ["domains/*"],
       "@db/*": ["database/*"]
     },
-    "typeRoots": ["src/types/express.ts", "./node_modules/@types"]
+    "typeRoots": [
+      "src/shared/types/express.ts", "./node_modules/@types"]
   },
   "exclude": ["**/*.js", "jest.config.js"],
   "ts-node": {

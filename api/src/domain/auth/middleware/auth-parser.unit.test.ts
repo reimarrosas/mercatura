@@ -1,14 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import { IConfig } from '@config/env'
-import { authParserFactory } from '@shared/middlewares/auth-parser'
+import { authParserFactory } from '@/domain/auth/middleware/auth-parser'
+import { validConfig } from '@shared/utils/testing/generate-valid-inputs'
 
 describe('Auth Parsing Middleware Unit Test', () => {
-  const validConfig = {
-    token: {
-      secret: '1testsecret1'
-    }
-  } as IConfig
-
   let req: Request
 
   beforeEach(() => {
