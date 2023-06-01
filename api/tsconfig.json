@@ -10,7 +10,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedLocals": true,
@@ -24,16 +24,17 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],
-      "@domains/*": ["domains/*"],
-      "@type/*": ["types/*"],
+      "@domain/*": ["domain/*"],
       "@db/*": ["database/*"]
     },
-    "typeRoots": ["src/types/express.ts", "./node_modules/@types"]
+    "typeRoots": [
+      "src/shared/types/express.ts", "./node_modules/@types"]
   },
   "exclude": ["**/*.js", "jest.config.js"],
   "ts-node": {

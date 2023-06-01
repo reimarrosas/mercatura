@@ -1,0 +1,10 @@
+services:
+  persistent_store:
+    image: postgres:latest
+    restart: 'always'
+    environment:
+      - POSTGRES_PASSWORD=mercatura
+      - POSTGRES_USER=mercatura
+      - POSTGRES_DB=mercatura
+    ports:
+      - '127.0.0.1:5432:5432'
