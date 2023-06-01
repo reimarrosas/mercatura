@@ -2,6 +2,7 @@ import { IConfig } from '@config/env'
 import { Response } from 'express'
 import { ILogger } from '@config/logger'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy'
+import { assertType } from '@shared/assert-type'
 
 export const validConfig = {
   token: {
@@ -9,10 +10,10 @@ export const validConfig = {
   }
 } as IConfig
 
-export const validResponse = {
+export const validResponse: Response = assertType({
   status: jest.fn((_: unknown) => validResponse),
   send: jest.fn((_: unknown) => validResponse)
-} as unknown as Response
+})
 
 export const validLogger: ILogger = {
   error: (...params: any[]) => {
