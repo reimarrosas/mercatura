@@ -14,6 +14,7 @@ export const authHandlerFactory = (
     const result = signupDto.safeParse(req.body)
 
     if (!result.success) {
+      logger.error(result.error)
       throw new AppError(
         HTTPStatusCodes.UNPROCESSABLE_ENTITY,
         'Invalid request body schema'
@@ -36,6 +37,7 @@ export const authHandlerFactory = (
     const result = loginDto.safeParse(req.body)
 
     if (!result.success) {
+      logger.error(result.error)
       throw new AppError(
         HTTPStatusCodes.UNPROCESSABLE_ENTITY,
         'Invalid request body schema'

@@ -1,4 +1,6 @@
 import express from 'express'
+import asyncHandler from 'express-async-handler'
+
 import { authHandlerFactory } from '@/domain/auth/auth.handler'
 import logger from '@config/logger'
 import { authServiceFactory } from '@/domain/auth/auth.service'
@@ -14,7 +16,7 @@ const jwtUtils = jwtUtilsFactory(config)
 const { login, signup } = authHandlerFactory(logger, authService, jwtUtils)
 
 router.use(guest)
-router.post('/login', login)
-router.post('/signup', signup)
+router.post('/login', asyncHandler(login))
+router.post('/signup', asyncHandler(signup))
 
 export default router
