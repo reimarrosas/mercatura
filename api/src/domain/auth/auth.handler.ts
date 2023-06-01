@@ -1,6 +1,5 @@
 import { IAuthService } from '@/domain/auth/auth.service'
 import { RequestHandler } from 'express'
-import { HandlerFactoryReturnType } from '@shared/types/handler-factory'
 import { ILogger } from '@config/logger'
 import { loginDto, signupDto } from '@/domain/auth/auth-dto'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
@@ -10,7 +9,7 @@ export const authHandlerFactory = (
   logger: ILogger,
   authService: IAuthService,
   jwtUtils: IJwtUtils
-): HandlerFactoryReturnType => {
+) => {
   const signup: RequestHandler = async (req, res) => {
     const result = signupDto.safeParse(req.body)
 

@@ -30,7 +30,7 @@
       "@/*": ["*"],
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],
-      "@domains/*": ["domains/*"],
+      "@domain/*": ["domain/*"],
       "@db/*": ["database/*"]
     },
     "typeRoots": [
