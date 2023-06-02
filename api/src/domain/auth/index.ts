@@ -1,9 +1,9 @@
 import express from 'express'
 import asyncHandler from 'express-async-handler'
 
-import { authHandlerFactory } from '@/domain/auth/auth.handler'
+import { authHandlerFactory } from '@domain/auth/handler'
 import logger from '@config/logger'
-import { authServiceFactory } from '@/domain/auth/auth.service'
+import { authServiceFactory } from '@domain/auth/service'
 import db from '@config/db'
 import { jwtUtilsFactory } from '@/domain/auth/utils/jwt'
 import config from '@config/env'

@@ -1,6 +1,6 @@
-import { IProductService } from '@domain/product/product.service'
+import { IProductService } from '@domain/product/service'
 import { validProductList } from '@domain/product/utils/valid-test-input'
-import { productHandlerFactory } from '@domain/product/product.handler'
+import { productHandlerFactory } from '@domain/product/handler'
 import {
   validLogger,
   validResponse

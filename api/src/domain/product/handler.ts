@@ -1,4 +1,4 @@
-import { IProductService } from '@domain/product/product.service'
+import { IProductService } from '@domain/product/service'
 import { ILogger } from '@config/logger'
 import { RequestHandler } from 'express'
 import { id } from '@shared/validators/id'
