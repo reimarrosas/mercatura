@@ -94,4 +94,90 @@ describe('Comment Handler Unit Test', () => {
       expect(validResponse.send).not.toHaveBeenCalled()
     })
   })
+
+  describe('updateComment Handler', () => {
+    it('should return 200 OK with Comment on valid update', async () => {
+      // Arrange
+      const auth = { id: 1 }
+      const params = { id: '1' }
+      const body = { productId: 1, content: 'Sample Comment, Hello, World!' }
+      const req: Request = assertType({ auth, params, body })
+      const commentService: ICommentService = assertType({
+        updateComment: jest.fn().mockResolvedValue(validComment)
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+
+      // Act
+      await commentHandler.updateComment(req, validResponse, () => {})
+
+      // Arrange
+      expect(commentService.updateComment).toHaveBeenCalledWith({
+        userId: auth.id,
+        id: parseInt(params.id),
+        ...body
+      })
+      expect(validResponse.send).toHaveBeenCalledWith({
+        message: 'Comment update successful',
+        data: validComment
+      })
+    })
+
+    it('should throw an AppError on invalid comment schema', async () => {
+      // Arrange
+      const auth = { id: undefined }
+      const params = { id: 'hello' }
+      const body = { productId: -1, content: '' }
+      const req: Request = assertType({ auth, params, body })
+      const commentService: ICommentService = assertType({
+        updateComment: jest.fn()
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await commentHandler.updateComment(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Arrange
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY
+      )
+      expect(commentService.updateComment).not.toHaveBeenCalled()
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+
+    it('should throw an AppError on database conflict', async () => {
+      // Arrange
+      const auth = { id: 1 }
+      const params = { id: '1' }
+      const body = { productId: 1, content: 'Sample Comment, Hello, World!' }
+      const req: Request = assertType({ auth, params, body })
+      const commentService: ICommentService = assertType({
+        updateComment: jest.fn().mockRejectedValue(validPrismaClientKnownError)
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await commentHandler.updateComment(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Arrange
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(HTTPStatusCodes.CONFLICT)
+      expect(commentService.updateComment).toHaveBeenCalledWith({
+        userId: auth.id,
+        id: parseInt(params.id),
+        ...body
+      })
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+  })
 })

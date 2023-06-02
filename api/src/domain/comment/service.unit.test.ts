@@ -34,4 +34,33 @@ describe('Comment Service Unit Test', () => {
       expect(result).toEqual(validComment)
     })
   })
+
+  describe('updateComment', () => {
+    it('should return the updated comment on valid update', async () => {
+      // Arrange
+      const comment: Comment = {
+        id: validComment.id,
+        userId: validComment.userId,
+        productId: validComment.productId,
+        content: 'New Comment Update, Hello, World!'
+      }
+      mockCtx.prisma.comment.update.mockResolvedValue({
+        ...validComment,
+        content: 'New Comment Update, Hello, World!'
+      })
+
+      // Act
+      const result = await commentService.updateComment(comment)
+
+      // Assert
+      expect(mockCtx.prisma.comment.update).toHaveBeenCalledWith({
+        data: comment,
+        where: { id: comment.id }
+      })
+      expect(result).toEqual({
+        ...validComment,
+        content: 'New Comment Update, Hello, World!'
+      })
+    })
+  })
 })

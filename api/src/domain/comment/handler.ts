@@ -38,7 +38,38 @@ export const commentHandlerFactory = (
     }
   }
 
+  const updateComment: RequestHandler = async (req, _res) => {
+    const result = comment.safeParse({
+      id: req.params['id'],
+      userId: req.auth?.id,
+      productId: req.body['productId'],
+      content: req.body['content']
+    })
+
+    if (!result.success) {
+      throw new AppError(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY,
+        'Invalid request body schema'
+      )
+    }
+
+    try {
+      const data = await commentService.updateComment(result.data)
+
+      return _res.send({
+        message: 'Comment update successful',
+        data
+      })
+    } catch (err) {
+      throw new AppError(
+        HTTPStatusCodes.CONFLICT,
+        'Cannot update comment due to conflict'
+      )
+    }
+  }
+
   return {
-    createComment
+    createComment,
+    updateComment
   }
 }
