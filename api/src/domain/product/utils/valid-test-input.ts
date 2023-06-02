@@ -11,7 +11,7 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 1 Description',
-    categoryId: null
+    categoryId: 1
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 2 Description',
-    categoryId: null
+    categoryId: 1
   },
   {
     id: 3,
@@ -35,6 +35,6 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 3 Description',
-    categoryId: null
+    categoryId: 2
   }
 ]
