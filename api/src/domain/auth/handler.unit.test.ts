@@ -4,8 +4,8 @@ import {
   validResponse
 } from '@shared/testing/generate-valid-inputs'
 import { Request } from 'express'
-import { authHandlerFactory } from '@/domain/auth/auth.handler'
-import { IAuthService } from '@/domain/auth/auth.service'
+import { authHandlerFactory } from '@domain/auth/handler'
+import { IAuthService } from '@domain/auth/service'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
 import {
   validAuthData,

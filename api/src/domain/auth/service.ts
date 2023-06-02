@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
-import { ILoginDto, ISignupDto } from '@/domain/auth/auth-dto'
+import { ILoginDto, ISignupDto } from '@domain/auth/dto'
 import { IAuthData } from '@shared/validators/auth-data'
 
 export interface IAuthService {

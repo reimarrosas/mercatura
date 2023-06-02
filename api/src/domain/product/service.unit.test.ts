@@ -1,9 +1,6 @@
 import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
 import { validProductList } from '@domain/product/utils/valid-test-input'
-import {
-  IProductService,
-  productServiceFactory
-} from '@domain/product/product.service'
+import { IProductService, productServiceFactory } from '@domain/product/service'
 import { assertType } from '@shared/assert-type'
 
 describe('Product Service Unit Test', () => {

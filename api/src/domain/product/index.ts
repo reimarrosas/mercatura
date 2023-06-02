@@ -1,7 +1,7 @@
 import express from 'express'
-import { productHandlerFactory } from '@domain/product/product.handler'
+import { productHandlerFactory } from '@domain/product/handler'
 import logger from '@config/logger'
-import { productServiceFactory } from '@domain/product/product.service'
+import { productServiceFactory } from '@domain/product/service'
 import db from '@config/db'
 
 const router = express.Router()

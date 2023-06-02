@@ -10,7 +10,8 @@ export const validProductList: Product[] = [
     created_at: new Date('January, 1, 2023 03:24:00'),
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
-    description: 'A Sample Product 1 Description'
+    description: 'A Sample Product 1 Description',
+    categoryId: 1
   },
   {
     id: 2,
@@ -21,7 +22,8 @@ export const validProductList: Product[] = [
     created_at: new Date('January, 1, 2023 03:24:00'),
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
-    description: 'A Sample Product 2 Description'
+    description: 'A Sample Product 2 Description',
+    categoryId: 1
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ export const validProductList: Product[] = [
     created_at: new Date('January, 1, 2023 03:24:00'),
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
-    description: 'A Sample Product 3 Description'
+    description: 'A Sample Product 3 Description',
+    categoryId: 2
   }
 ]

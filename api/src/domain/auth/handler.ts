@@ -1,7 +1,7 @@
-import { IAuthService } from '@/domain/auth/auth.service'
+import { IAuthService } from '@domain/auth/service'
 import { RequestHandler } from 'express'
 import { ILogger } from '@config/logger'
-import { loginDto, signupDto } from '@/domain/auth/auth-dto'
+import { loginDto, signupDto } from '@domain/auth/dto'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
 import { IJwtUtils } from '@/domain/auth/utils/jwt'
 
