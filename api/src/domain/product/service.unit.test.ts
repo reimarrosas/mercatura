@@ -22,7 +22,15 @@ describe('Product Service Unit Test', () => {
       const result = await productService.getAllProducts()
 
       // Assert
-      expect(mockCtx.prisma.product.findMany).toHaveBeenCalled()
+      expect(mockCtx.prisma.product.findMany).toHaveBeenCalledWith({
+        include: {
+          _count: {
+            select: {
+              Rating: true
+            }
+          }
+        }
+      })
       expect(result).toEqual(validProductList)
     })
   })
@@ -37,7 +45,16 @@ describe('Product Service Unit Test', () => {
 
       // Assert
       expect(mockCtx.prisma.product.findUnique).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { id: 1 } })
+        expect.objectContaining({
+          where: { id: 1 },
+          include: {
+            _count: {
+              select: {
+                Rating: true
+              }
+            }
+          }
+        })
       )
       expect(result).toEqual(validProductList[0]!)
     })
@@ -51,7 +68,16 @@ describe('Product Service Unit Test', () => {
 
       // Assert
       expect(mockCtx.prisma.product.findUnique).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { id: 10 } })
+        expect.objectContaining({
+          where: { id: 10 },
+          include: {
+            _count: {
+              select: {
+                Rating: true
+              }
+            }
+          }
+        })
       )
       expect(result).toBeUndefined()
     })
@@ -65,6 +91,13 @@ describe('Product Service Unit Test', () => {
             { name: { contains: searchTerm, mode: 'insensitive' } },
             { description: { contains: searchTerm, mode: 'insensitive' } }
           ]
+        },
+        include: {
+          _count: {
+            select: {
+              Rating: true
+            }
+          }
         }
       })
 

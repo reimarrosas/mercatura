@@ -1,6 +1,10 @@
 import { Product, Prisma } from '@prisma/client'
 
-export const validProductList: Product[] = [
+export type ProductWithRating = Product & {
+  rating: number
+}
+
+export const validProductList: ProductWithRating[] = [
   {
     id: 1,
     name: 'Sample Product 1',
@@ -11,7 +15,8 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 1 Description',
-    categoryId: 1
+    categoryId: 1,
+    rating: 4.8
   },
   {
     id: 2,
@@ -23,7 +28,8 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 2 Description',
-    categoryId: 1
+    categoryId: 1,
+    rating: 4.2
   },
   {
     id: 3,
@@ -35,6 +41,7 @@ export const validProductList: Product[] = [
     updated_at: new Date('January, 1, 2023 03:24:00'),
     quantity: 100,
     description: 'A Sample Product 3 Description',
-    categoryId: 2
+    categoryId: 2,
+    rating: 4.5
   }
 ]
