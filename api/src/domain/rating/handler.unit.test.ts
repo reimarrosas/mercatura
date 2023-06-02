@@ -75,7 +75,6 @@ describe('Rating Handler Unit Test', () => {
 
     it('should throw an AppError on unique conflict', async () => {
       // Arrange
-      // Arrange
       const body = {
         productId: 1,
         value: 5
@@ -99,6 +98,94 @@ describe('Rating Handler Unit Test', () => {
       expect(expectedError!).toBeInstanceOf(AppError)
       expect(expectedError!.statusCode).toBe(HTTPStatusCodes.CONFLICT)
       expect(ratingService.addRating).toHaveBeenCalled()
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('updateRating Handler', () => {
+    it('should return 200 OK with a rating on valid rating', async () => {
+      // Arrange
+      const body = {
+        productId: 1,
+        value: 5
+      }
+      const auth = { id: 1 }
+      const rating = {
+        ...body,
+        userId: auth.id
+      }
+      const req: Request = assertType({ auth, body })
+      const ratingService: IRatingService = assertType({
+        updateRating: jest.fn().mockResolvedValue(rating)
+      })
+      const ratingHandler = ratingHandlerFactory(validLogger, ratingService)
+
+      // Act
+      await ratingHandler.updateRating(req, validResponse, () => {})
+
+      // Assert
+      expect(ratingService.updateRating).toHaveBeenCalledWith(rating)
+      expect(validResponse.send).toHaveBeenCalledWith({
+        message: 'Rating update successful',
+        data: rating
+      })
+    })
+
+    it('should throw an AppError on invalid rating', async () => {
+      // Arrange
+      const body = {
+        productId: -1,
+        value: -5
+      }
+      const auth = { id: 1 }
+      const req: Request = assertType({ auth, body })
+      const ratingService: IRatingService = assertType({
+        updateRating: jest.fn()
+      })
+      const ratingHandler = ratingHandlerFactory(validLogger, ratingService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await ratingHandler.updateRating(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Assert
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY
+      )
+      expect(ratingService.updateRating).not.toHaveBeenCalled()
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+
+    it('should throw an AppError on non-existent rating', async () => {
+      // Arrange
+      const body = {
+        productId: 3,
+        value: 5
+      }
+      const auth = { id: 1 }
+      const req: Request = assertType({ auth, body })
+      const ratingService: IRatingService = assertType({
+        updateRating: jest.fn().mockRejectedValue(validPrismaClientKnownError)
+      })
+      const ratingHandler = ratingHandlerFactory(validLogger, ratingService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await ratingHandler.updateRating(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Assert
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(HTTPStatusCodes.CONFLICT)
+      expect(ratingService.updateRating).toHaveBeenCalled()
       expect(validResponse.send).not.toHaveBeenCalled()
     })
   })

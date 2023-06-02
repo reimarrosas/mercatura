@@ -15,13 +15,9 @@ export const ratingHandlerFactory = (
       value: req.body['value']
     }
 
-    console.log(maybeRating)
-
     const result = rating.safeParse(maybeRating)
 
     if (!result.success) {
-      console.log(result.error)
-
       throw new AppError(
         HTTPStatusCodes.UNPROCESSABLE_ENTITY,
         'Invalid request body schema'
@@ -41,7 +37,36 @@ export const ratingHandlerFactory = (
     }
   }
 
+  const updateRating: RequestHandler = async (req, res) => {
+    const maybeRating: unknown = {
+      userId: req.auth?.id,
+      productId: req.body['productId'],
+      value: req.body['value']
+    }
+    const result = rating.safeParse(maybeRating)
+
+    if (!result.success) {
+      throw new AppError(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY,
+        'Invalid request body schema'
+      )
+    }
+
+    try {
+      const data = await ratingService.updateRating(result.data)
+
+      return res.send({
+        message: 'Rating update successful',
+        data
+      })
+    } catch (err) {
+      logger.error(err)
+      throw new AppError(HTTPStatusCodes.CONFLICT, 'Rating does not exist')
+    }
+  }
+
   return {
-    addRating
+    addRating,
+    updateRating
   }
 }

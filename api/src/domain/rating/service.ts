@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 export interface IRatingService {
   addRating: (rating: Rating) => Promise<Rating>
+  updateRating: (rating: Rating) => Promise<Rating>
 }
 
 export const ratingServiceFactory = (db: PrismaClient): IRatingService => {
@@ -11,7 +12,19 @@ export const ratingServiceFactory = (db: PrismaClient): IRatingService => {
       data: rating
     })
 
+  const updateRating = async (rating: Rating) =>
+    db.rating.update({
+      data: { value: rating.value },
+      where: {
+        productId_userId: {
+          userId: rating.userId,
+          productId: rating.productId
+        }
+      }
+    })
+
   return {
-    addRating
+    addRating,
+    updateRating
   }
 }
