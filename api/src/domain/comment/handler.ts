@@ -1,7 +1,7 @@
 import { ILogger } from '@config/logger'
 import { ICommentService } from '@domain/comment/service'
 import { RequestHandler } from 'express'
-import { comment } from '@domain/comment/dto'
+import { comment, deleteComment as deleteParser } from '@domain/comment/dto'
 import { AppError, HTTPStatusCodes } from '@shared/app-error'
 
 export const commentHandlerFactory = (
@@ -68,8 +68,37 @@ export const commentHandlerFactory = (
     }
   }
 
+  const deleteComment: RequestHandler = async (req, res) => {
+    const result = deleteParser.safeParse({
+      userId: req.auth?.id,
+      id: req.params['id']
+    })
+
+    if (!result.success) {
+      throw new AppError(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY,
+        'Invalid request schema'
+      )
+    }
+
+    const data = await commentService.deleteComment(result.data)
+
+    if (!data) {
+      throw new AppError(
+        HTTPStatusCodes.NOT_FOUND,
+        `Comment ${result.data.id} not found`
+      )
+    }
+
+    return res.send({
+      message: 'Comment deletion successful',
+      data
+    })
+  }
+
   return {
     createComment,
-    updateComment
+    updateComment,
+    deleteComment
   }
 }

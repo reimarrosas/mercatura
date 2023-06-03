@@ -180,4 +180,84 @@ describe('Comment Handler Unit Test', () => {
       expect(validResponse.send).not.toHaveBeenCalled()
     })
   })
+
+  describe('deleteComment Handler', () => {
+    it('should return 200 OK and comment on valid delete', async () => {
+      // Arrange
+      const auth = { id: 1 }
+      const params = { id: '1' }
+      const req: Request = assertType({ auth, params })
+      const commentService: ICommentService = assertType({
+        deleteComment: jest.fn().mockResolvedValue(validComment)
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+
+      // Act
+      await commentHandler.deleteComment(req, validResponse, () => {})
+
+      // Arrange
+      expect(commentService.deleteComment).toHaveBeenCalledWith({
+        userId: auth.id,
+        id: parseInt(params.id)
+      })
+      expect(validResponse.send).toHaveBeenCalledWith({
+        message: 'Comment deletion successful',
+        data: validComment
+      })
+    })
+
+    it('should throw an AppError on invalid comment schema', async () => {
+      // Arrange
+      const auth = { id: -1 }
+      const params = { id: 'hello' }
+      const req: Request = assertType({ auth, params })
+      const commentService: ICommentService = assertType({
+        deleteComment: jest.fn()
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await commentHandler.deleteComment(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Arrange
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(
+        HTTPStatusCodes.UNPROCESSABLE_ENTITY
+      )
+      expect(commentService.deleteComment).not.toHaveBeenCalled()
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+
+    it('should throw an AppError on non-existent comment', async () => {
+      const auth = { id: 1 }
+      const params = { id: '10' }
+      const req: Request = assertType({ auth, params })
+      const commentService: ICommentService = assertType({
+        deleteComment: jest.fn().mockResolvedValue(undefined)
+      })
+      const commentHandler = commentHandlerFactory(validLogger, commentService)
+      let expectedError: AppError
+
+      // Act
+      try {
+        await commentHandler.deleteComment(req, validResponse, () => {})
+      } catch (err) {
+        expectedError = assertType(err)
+      }
+
+      // Arrange
+      expect(expectedError!).toBeInstanceOf(AppError)
+      expect(expectedError!.statusCode).toBe(HTTPStatusCodes.NOT_FOUND)
+      expect(commentService.deleteComment).toHaveBeenCalledWith({
+        userId: auth.id,
+        id: parseInt(params.id)
+      })
+      expect(validResponse.send).not.toHaveBeenCalled()
+    })
+  })
 })

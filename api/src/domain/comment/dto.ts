@@ -9,3 +9,10 @@ export const comment = z.object({
 })
 
 export type Comment = z.infer<typeof comment>
+
+export const deleteComment = z.object({
+  id,
+  userId: id
+})
+
+export type DeleteComment = z.infer<typeof deleteComment>

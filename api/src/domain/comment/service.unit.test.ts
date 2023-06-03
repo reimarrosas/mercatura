@@ -1,8 +1,9 @@
 import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
 import { assertType } from '@shared/assert-type'
 import { validComment } from '@domain/comment/utils/valid-test-input'
-import { Comment } from '@domain/comment/dto'
+import { Comment, DeleteComment } from '@domain/comment/dto'
 import { commentServiceFactory, ICommentService } from '@domain/comment/service'
+import { validPrismaClientKnownError } from '@shared/testing/generate-valid-inputs'
 
 describe('Comment Service Unit Test', () => {
   let mockCtx: MockContext
@@ -61,6 +62,45 @@ describe('Comment Service Unit Test', () => {
         ...validComment,
         content: 'New Comment Update, Hello, World!'
       })
+    })
+  })
+
+  describe('deleteComment', () => {
+    it('should return the delete comment invalid delete', async () => {
+      // Arrange
+      const comment: DeleteComment = {
+        id: validComment.id,
+        userId: validComment.userId
+      }
+      mockCtx.prisma.comment.delete.mockResolvedValue(validComment)
+
+      // Act
+      const result = await commentService.deleteComment(comment)
+
+      // Assert
+      expect(mockCtx.prisma.comment.delete).toHaveBeenCalledWith({
+        where: comment
+      })
+      expect(result).toEqual(validComment)
+    })
+
+    it('should return undefined on error throw', async () => {
+      const comment: DeleteComment = {
+        id: 100,
+        userId: 100
+      }
+      mockCtx.prisma.comment.delete.mockRejectedValue(
+        validPrismaClientKnownError
+      )
+
+      // Act
+      const result = await commentService.deleteComment(comment)
+
+      // Assert
+      expect(mockCtx.prisma.comment.delete).toHaveBeenCalledWith({
+        where: comment
+      })
+      expect(result).toBeUndefined()
     })
   })
 })
