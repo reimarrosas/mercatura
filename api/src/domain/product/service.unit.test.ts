@@ -1,5 +1,8 @@
 import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
-import { validProductList } from '@domain/product/utils/valid-test-input'
+import {
+  validProductList,
+  validSingleProduct
+} from '@domain/product/utils/valid-test-input'
 import { IProductService, productServiceFactory } from '@domain/product/service'
 import { assertType } from '@shared/assert-type'
 
@@ -38,7 +41,7 @@ describe('Product Service Unit Test', () => {
   describe('getProduct', () => {
     it('should return a single product on existing ID', async () => {
       // Arrange
-      mockCtx.prisma.product.findUnique.mockResolvedValue(validProductList[0]!)
+      mockCtx.prisma.product.findUnique.mockResolvedValue(validSingleProduct)
 
       // Act
       const result = await productService.getProduct(1)
@@ -48,15 +51,12 @@ describe('Product Service Unit Test', () => {
         expect.objectContaining({
           where: { id: 1 },
           include: {
-            _count: {
-              select: {
-                Rating: true
-              }
-            }
+            _count: { select: { Rating: true } },
+            Comment: true
           }
         })
       )
-      expect(result).toEqual(validProductList[0]!)
+      expect(result).toEqual(validSingleProduct)
     })
 
     it('should return undefined on non-existent product', async () => {
@@ -71,11 +71,8 @@ describe('Product Service Unit Test', () => {
         expect.objectContaining({
           where: { id: 10 },
           include: {
-            _count: {
-              select: {
-                Rating: true
-              }
-            }
+            _count: { select: { Rating: true } },
+            Comment: true
           }
         })
       )
