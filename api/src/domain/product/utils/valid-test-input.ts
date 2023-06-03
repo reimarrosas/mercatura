@@ -1,7 +1,7 @@
-import { Product, Prisma } from '@prisma/client'
+import { Product, Prisma, Comment } from '@prisma/client'
 
 export type ProductWithRating = Product & {
-  rating: number
+  Rating: number
 }
 
 export const validProductList: ProductWithRating[] = [
@@ -16,7 +16,7 @@ export const validProductList: ProductWithRating[] = [
     quantity: 100,
     description: 'A Sample Product 1 Description',
     categoryId: 1,
-    rating: 4.8
+    Rating: 4.8
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ export const validProductList: ProductWithRating[] = [
     quantity: 100,
     description: 'A Sample Product 2 Description',
     categoryId: 1,
-    rating: 4.2
+    Rating: 4.2
   },
   {
     id: 3,
@@ -42,6 +42,39 @@ export const validProductList: ProductWithRating[] = [
     quantity: 100,
     description: 'A Sample Product 3 Description',
     categoryId: 2,
-    rating: 4.5
+    Rating: 4.5
   }
 ]
+
+export type ProductWithRatingAndComments = ProductWithRating & {
+  Comments: Comment[]
+}
+export const validSingleProduct: ProductWithRatingAndComments = {
+  ...validProductList[0]!,
+  Comments: [
+    {
+      id: 1,
+      userId: 1,
+      productId: 1,
+      created_at: new Date('January, 1, 2023 03:24:00'),
+      updated_at: new Date('January, 1, 2023 03:24:00'),
+      content: 'Sample Comment 1'
+    },
+    {
+      id: 2,
+      userId: 1,
+      productId: 1,
+      created_at: new Date('January, 1, 2023 03:24:00'),
+      updated_at: new Date('January, 1, 2023 03:24:00'),
+      content: 'Sample Comment 2'
+    },
+    {
+      id: 1,
+      userId: 1,
+      productId: 1,
+      created_at: new Date('January, 1, 2023 03:24:00'),
+      updated_at: new Date('January, 1, 2023 03:24:00'),
+      content: 'Sample Comment 1'
+    }
+  ]
+}

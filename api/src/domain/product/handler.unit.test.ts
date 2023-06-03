@@ -1,5 +1,8 @@
 import { IProductService } from '@domain/product/service'
-import { validProductList } from '@domain/product/utils/valid-test-input'
+import {
+  validProductList,
+  validSingleProduct
+} from '@domain/product/utils/valid-test-input'
 import { productHandlerFactory } from '@domain/product/handler'
 import {
   validLogger,
@@ -46,7 +49,7 @@ describe('Product Handler Unit Test', () => {
       const req: Request = assertType({ params: { id: '1' } })
       productService.getProduct = jest
         .fn()
-        .mockResolvedValue(validProductList[0]!)
+        .mockResolvedValue(validSingleProduct)
       const productHandler = productHandlerFactory(validLogger, productService)
 
       // Act
@@ -56,7 +59,7 @@ describe('Product Handler Unit Test', () => {
       expect(productService.getProduct).toHaveBeenCalledWith(1)
       expect(validResponse.send).toHaveBeenCalledWith({
         message: 'Fetching Product 1 successful',
-        data: validProductList[0]!
+        data: validSingleProduct
       })
     })
 

@@ -27,7 +27,8 @@ export const productServiceFactory = (db: PrismaClient): IProductService => {
           select: {
             Rating: true
           }
-        }
+        },
+        Comment: true
       }
     })
 
