@@ -16,7 +16,11 @@ export const commentServiceFactory = (db: PrismaClient): ICommentService => {
   const updateComment = async (dto: CommentDTO) =>
     db.comment.update({
       data: dto,
-      where: { id: dto.id }
+      where: {
+        id: dto.id,
+        userId: dto.userId,
+        productId: dto.productId
+      }
     })
 
   const deleteComment = async (dto: DeleteComment) => {

@@ -60,7 +60,11 @@ describe('Comment Service Unit Test', () => {
       // Assert
       expect(mockCtx.prisma.comment.update).toHaveBeenCalledWith({
         data: comment,
-        where: { id: comment.id }
+        where: {
+          id: comment.id,
+          productId: comment.productId,
+          userId: comment.userId
+        }
       })
       expect(result).toEqual({
         ...validComment,
