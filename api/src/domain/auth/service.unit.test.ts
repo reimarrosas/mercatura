@@ -1,4 +1,8 @@
-import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
+import {
+  Context,
+  createMockContext,
+  MockContext
+} from '@shared/testing/mock-ctx'
 import { authServiceFactory } from '@domain/auth/service'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/data-proxy'
 import { validPrismaClientKnownError } from '@shared/testing/generate-valid-inputs'
