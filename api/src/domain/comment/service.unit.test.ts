@@ -1,4 +1,8 @@
-import { Context, createMockContext, MockContext } from '@shared/testing/db-ctx'
+import {
+  Context,
+  createMockContext,
+  MockContext
+} from '@shared/testing/mock-ctx'
 import { assertType } from '@shared/assert-type'
 import { validComment } from '@domain/comment/utils/valid-test-input'
 import { Comment, DeleteComment } from '@domain/comment/dto'

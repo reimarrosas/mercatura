@@ -7,12 +7,14 @@ import { assertType } from '@shared/assert-type'
 export const validConfig = {
   token: {
     secret: '1testsecret1'
-  }
+  },
+  clientUrl: 'http://localhost:3000'
 } as IConfig
 
 export const validResponse: Response = assertType({
   status: jest.fn((_: unknown) => validResponse),
-  send: jest.fn((_: unknown) => validResponse)
+  send: jest.fn((_: unknown) => validResponse),
+  redirect: jest.fn((_status: number, _url: string) => validResponse)
 })
 
 export const validLogger: ILogger = {
