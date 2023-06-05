@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 datasource db {
@@ -17,21 +18,23 @@ model User {
   password String
   Rating   Rating[]
   Comment  Comment[]
+  Invoice  Invoice[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   description String
   image       String
   price       Decimal
   quantity    Int
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  Category    Category? @relation(fields: [categoryId], references: [id])
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  Category    Category?     @relation(fields: [categoryId], references: [id])
   categoryId  Int?
   Rating      Rating[]
   Comment     Comment[]
+  InvoiceLine InvoiceLine[]
 }
 
 model Category {
@@ -63,4 +66,22 @@ model Comment {
   userId     Int
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId  Int
+}
+
+model Invoice {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime      @default(now())
+  InvoiceLine InvoiceLine[]
+}
+
+model InvoiceLine {
+  id        Int     @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  price     Decimal
+  quantity  Int
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: SetNull)
 }
