@@ -73,7 +73,13 @@ model Invoice {
   userId      Int
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   date        DateTime      @default(now())
+  status      InvoiceStatus @default(PENDING)
   InvoiceLine InvoiceLine[]
+}
+
+enum InvoiceStatus {
+  PENDING
+  COMPLETED
 }
 
 model InvoiceLine {
